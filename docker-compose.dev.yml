@@ -1,0 +1,42 @@
+version: '3.9'
+
+# Development override - for local development only
+services:
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: library_db
+      POSTGRES_USER: library_user
+      POSTGRES_PASSWORD: devpassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder
+    command: >
+      sh -c "pip install -r requirements.txt &&
+             python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - ./app:/app
+    ports:
+      - "8000:8000"
+    environment:
+      SECRET_KEY: dev-secret-key-not-for-production
+      DEBUG: "True"
+      ALLOWED_HOSTS: "localhost,127.0.0.1"
+      DB_NAME: library_db
+      DB_USER: library_user
+      DB_PASSWORD: devpassword
+      DB_HOST: db
+      DB_PORT: 5432
+    depends_on:
+      - db
+
+volumes:
+  postgres_dev_data:
