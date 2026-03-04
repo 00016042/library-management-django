@@ -180,4 +180,8 @@ jobs:
             sleep 5
             curl -f http://localhost/admin/ || echo "Warning: health check failed"
 
+            # Load sample data on first deployment
+            echo "Loading sample data..."
+            docker compose exec -T web python manage.py load_sample_data || true
+
             echo "Deployment completed successfully!"
