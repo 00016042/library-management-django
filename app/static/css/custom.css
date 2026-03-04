@@ -1,0 +1,126 @@
+/* Library Management System - Custom Styles
+   Student ID: 00016042
+*/
+
+/* ===== Root Variables ===== */
+:root {
+    --primary-dark: #2c3e50;
+    --primary-blue: #3498db;
+    --success-green: #27ae60;
+    --warning-orange: #e67e22;
+    --danger-red: #e74c3c;
+    --border-radius: 12px;
+    --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* ===== General ===== */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f4f8;
+    color: #333;
+}
+
+/* ===== Navbar ===== */
+.navbar {
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary-blue)) !important;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* ===== Cards ===== */
+.card {
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    border: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.book-card:hover {
+    transform: translateY(-5px);
+}
+
+/* ===== Stat Cards ===== */
+.stat-card {
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    color: white;
+    box-shadow: var(--shadow);
+}
+
+/* ===== Buttons ===== */
+.btn {
+    border-radius: 8px;
+    font-weight: 500;
+    padding: 0.5rem 1.25rem;
+    transition: all 0.2s ease;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+}
+
+/* ===== Forms ===== */
+.form-control, .form-select {
+    border-radius: 8px;
+    border: 1.5px solid #dee2e6;
+    padding: 0.6rem 1rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.15);
+}
+
+/* ===== Tables ===== */
+.table th {
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* ===== Badges ===== */
+.badge {
+    border-radius: 6px;
+    font-weight: 500;
+    padding: 0.4em 0.75em;
+}
+
+/* ===== Pagination ===== */
+.page-link {
+    border-radius: 8px;
+    margin: 0 2px;
+    border: none;
+    color: var(--primary-blue);
+}
+
+.page-item.active .page-link {
+    background-color: var(--primary-blue);
+    border-color: var(--primary-blue);
+}
+
+/* ===== Footer ===== */
+footer {
+    background: var(--primary-dark);
+    color: rgba(255, 255, 255, 0.7);
+    margin-top: auto;
+}
+
+/* ===== Alerts ===== */
+.alert {
+    border-radius: var(--border-radius);
+    border: none;
+    box-shadow: var(--shadow);
+}
+
+/* ===== Hero Section ===== */
+.hero-section {
+    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-blue) 100%);
+    border-radius: var(--border-radius);
+    padding: 3rem 2rem;
+    color: white;
+}
