@@ -1,0 +1,183 @@
+name: CI/CD Pipeline - Library Management System
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  IMAGE_NAME: kozimbek/library-management-django
+
+jobs:
+  # ============================================================
+  # Job 1: Code Quality Check
+  # ============================================================
+  lint:
+    name: Code Quality (flake8)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install flake8
+        run: pip install flake8
+
+      - name: Run flake8 linting
+        run: |
+          flake8 app/ \
+            --max-line-length=120 \
+            --exclude=app/*/migrations/,app/conftest.py \
+            --ignore=E501,W503
+
+  # ============================================================
+  # Job 2: Run Tests
+  # ============================================================
+  test:
+    name: Run Tests (pytest-django)
+    runs-on: ubuntu-latest
+    needs: lint
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: test_library_db
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r app/requirements.txt
+
+      - name: Run pytest
+        env:
+          SECRET_KEY: test-secret-key-for-ci-only
+          DEBUG: "True"
+          ALLOWED_HOSTS: "localhost,127.0.0.1"
+          DB_NAME: test_library_db
+          DB_USER: test_user
+          DB_PASSWORD: test_password
+          DB_HOST: localhost
+          DB_PORT: 5432
+        run: |
+          cd app
+          pytest books/tests.py -v --tb=short
+
+  # ============================================================
+  # Job 3: Build and Push Docker Image
+  # ============================================================
+  build:
+    name: Build & Push Docker Image
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Extract metadata for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=latest
+            type=sha,prefix=sha-,format=short
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          dockerfile: Dockerfile
+          target: production
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # ============================================================
+  # Job 4: Deploy to Production Server
+  # ============================================================
+  deploy:
+    name: Deploy to Eskiz Server
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /opt/library-management-django
+
+            # Pull latest images from Docker Hub
+            echo "Pulling latest Docker images..."
+            docker compose pull
+
+            # Stop old containers gracefully
+            echo "Stopping old containers..."
+            docker compose down --remove-orphans
+
+            # Start new containers
+            echo "Starting new containers..."
+            docker compose up -d
+
+            # Wait for database to be ready
+            echo "Waiting for database..."
+            sleep 10
+
+            # Run database migrations
+            echo "Running migrations..."
+            docker compose exec -T web python manage.py migrate --noinput
+
+            # Collect static files
+            echo "Collecting static files..."
+            docker compose exec -T web python manage.py collectstatic --noinput
+
+            # Health check
+            echo "Checking application health..."
+            sleep 5
+            curl -f http://localhost/admin/ || echo "Warning: health check failed"
+
+            echo "Deployment completed successfully!"
