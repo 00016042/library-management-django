@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}Return Book - Library Management System{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card border-warning">
+            <div class="card-header bg-warning text-dark">
+                <h4 class="mb-0"><i class="fas fa-undo me-2"></i>Return Book</h4>
+            </div>
+            <div class="card-body text-center py-4">
+                <i class="fas fa-book-open fa-4x text-warning mb-3"></i>
+                <h5>Confirm returning this book?</h5>
+                <p class="fw-bold fs-5 text-primary">"{{ record.book.title }}"</p>
+                <p class="text-muted">Borrowed on: {{ record.borrow_date }} | Due: {{ record.due_date }}</p>
+                <form method="post" class="d-inline-block me-2">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-warning btn-lg">
+                        <i class="fas fa-undo me-2"></i>Yes, Return Book
+                    </button>
+                </form>
+                <a href="{% url 'my-borrows' %}" class="btn btn-secondary btn-lg">Cancel</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

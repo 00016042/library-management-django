@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}My Profile - Library Management System{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <div class="card text-center mb-4">
+            <div class="card-body py-5">
+                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 100px; height: 100px; font-size: 2.5rem;">
+                    {{ user.username.0|upper }}
+                </div>
+                <h4 class="fw-bold">{{ user.get_full_name|default:user.username }}</h4>
+                <p class="text-muted">{{ user.email }}</p>
+                {% if member %}
+                <span class="badge bg-primary fs-6">ID: {{ member.member_id }}</span>
+                <p class="text-muted small mt-2">Member since {{ member.membership_date }}</p>
+                {% endif %}
+                {% if user.is_staff %}
+                <span class="badge bg-warning text-dark">Staff</span>
+                {% endif %}
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <h6 class="fw-bold"><i class="fas fa-chart-bar me-2 text-primary"></i>My Stats</h6>
+                {% if member %}
+                <p class="mb-1">Total Borrows: <strong>{{ member.borrow_records.count }}</strong></p>
+                <p class="mb-0">Active Borrows: <strong>{{ member.borrow_records.filter.count }}</strong></p>
+                {% endif %}
+                <a href="{% url 'my-borrows' %}" class="btn btn-outline-primary btn-sm mt-3 w-100">
+                    <i class="fas fa-bookmark me-1"></i>View My Borrows
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0 fw-bold"><i class="fas fa-edit me-2"></i>Edit Profile</h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Update Profile
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}Authors - Library Management System{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="fw-bold"><i class="fas fa-user-edit me-2 text-primary"></i>Authors</h1>
+    {% if user.is_staff %}
+    <a href="{% url 'author-create' %}" class="btn btn-primary">
+        <i class="fas fa-plus me-2"></i>Add Author
+    </a>
+    {% endif %}
+</div>
+
+<div class="row g-4">
+    {% for author in authors %}
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                {% if author.photo %}
+                <img src="{{ author.photo.url }}" class="rounded-circle mb-3" style="width: 100px; height: 100px; object-fit: cover;" alt="{{ author.full_name }}">
+                {% else %}
+                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 80px; height: 80px; font-size: 2rem;">
+                    {{ author.first_name.0 }}{{ author.last_name.0 }}
+                </div>
+                {% endif %}
+                <h5 class="fw-bold">{{ author.full_name }}</h5>
+                <p class="text-muted small">{{ author.bio|truncatechars:100 }}</p>
+                <span class="badge bg-primary">{{ author.books.count }} books</span>
+            </div>
+            <div class="card-footer bg-transparent">
+                <a href="{{ author.get_absolute_url }}" class="btn btn-outline-primary btn-sm w-100">
+                    <i class="fas fa-eye me-1"></i>View Profile
+                </a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12 text-center py-5 text-muted">
+        <i class="fas fa-user-edit fa-3x mb-3"></i>
+        <h4>No authors yet</h4>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

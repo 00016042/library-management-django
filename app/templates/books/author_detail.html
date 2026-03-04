@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ author.full_name }} - Library Management System{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <div class="card text-center mb-4">
+            <div class="card-body py-5">
+                {% if author.photo %}
+                <img src="{{ author.photo.url }}" class="rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;" alt="{{ author.full_name }}">
+                {% else %}
+                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 120px; height: 120px; font-size: 2.5rem;">
+                    {{ author.first_name.0 }}{{ author.last_name.0 }}
+                </div>
+                {% endif %}
+                <h3 class="fw-bold">{{ author.full_name }}</h3>
+                {% if author.birth_date %}
+                <p class="text-muted"><i class="fas fa-birthday-cake me-1"></i>{{ author.birth_date }}</p>
+                {% endif %}
+                <span class="badge bg-primary fs-6">{{ books.count }} book{{ books.count|pluralize }}</span>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'author-list' %}">Authors</a></li>
+                <li class="breadcrumb-item active">{{ author.full_name }}</li>
+            </ol>
+        </nav>
+        <div class="card mb-4">
+            <div class="card-header"><strong>About the Author</strong></div>
+            <div class="card-body">
+                <p class="mb-0">{{ author.bio|default:"No biography available." }}</p>
+            </div>
+        </div>
+        <h4 class="fw-bold mb-3"><i class="fas fa-books me-2 text-primary"></i>Books by {{ author.first_name }}</h4>
+        <div class="row g-3">
+            {% for book in books %}
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h6 class="fw-bold">{{ book.title }}</h6>
+                        <p class="text-muted small mb-1">ISBN: {{ book.isbn }}</p>
+                        {% if book.is_available %}
+                        <span class="badge bg-success">Available</span>
+                        {% else %}
+                        <span class="badge bg-danger">Unavailable</span>
+                        {% endif %}
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <a href="{{ book.get_absolute_url }}" class="btn btn-outline-primary btn-sm w-100">View</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-muted">No books available for this author.</div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
