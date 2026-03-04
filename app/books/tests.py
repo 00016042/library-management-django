@@ -1,7 +1,7 @@
 import pytest
 from django.urls import reverse
 from django.contrib.auth.models import User
-from books.models import Author, Book, Category, Member, BorrowRecord
+from books.models import BorrowRecord
 from datetime import date, timedelta
 
 
@@ -99,7 +99,7 @@ class TestViews:
         assert response.status_code == 302
 
     def test_register_creates_user(self, client, db):
-        response = client.post(reverse('register'), {
+        client.post(reverse('register'), {
             'username': 'newuser',
             'email': 'new@example.com',
             'first_name': 'New',

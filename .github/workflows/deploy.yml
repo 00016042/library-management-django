@@ -33,7 +33,7 @@ jobs:
           flake8 app/ \
             --max-line-length=120 \
             --exclude=app/*/migrations/,app/conftest.py \
-            --ignore=E501,W503
+            --ignore=E501,W503,W504
 
   # ============================================================
   # Job 2: Run Tests
