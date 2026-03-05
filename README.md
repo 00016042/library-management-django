@@ -237,3 +237,4 @@ pytest books/tests.py -v
 - **Application URL:** https://yourdomain.uz
 - **GitHub Repository:** https://github.com/00016042/library-management-django
 - **Docker Hub:** https://hub.docker.com/r/kozimbek/library-management-django
+# Deployed to https://00016042-library.duckdns.org
