@@ -60,7 +60,7 @@ services:
       - static_volume:/app/staticfiles:ro
       - media_volume:/app/media:ro
       - certbot_webroot:/var/www/certbot:ro
-      - certbot_certs:/etc/letsencrypt:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
     networks:
       - library_network
     depends_on:
@@ -74,8 +74,6 @@ volumes:
   media_volume:
     driver: local
   certbot_webroot:
-    driver: local
-  certbot_certs:
     driver: local
 
 networks:

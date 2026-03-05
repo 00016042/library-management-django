@@ -148,8 +148,22 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          envs: SECRET_KEY,DB_PASSWORD
           script: |
             cd /opt/library-management-django
+
+            # Write production .env file with correct values
+            echo "Writing production .env file..."
+            cat > .env << EOF
+            SECRET_KEY=${SECRET_KEY}
+            DEBUG=False
+            ALLOWED_HOSTS=00016042-library.duckdns.org,localhost,127.0.0.1
+            DB_NAME=library_db
+            DB_USER=library_user
+            DB_PASSWORD=${DB_PASSWORD}
+            DB_HOST=db
+            DB_PORT=5432
+            EOF
 
             # Pull latest images from Docker Hub
             echo "Pulling latest Docker images..."
@@ -165,7 +179,14 @@ jobs:
 
             # Wait for database to be ready
             echo "Waiting for database..."
-            sleep 10
+            for i in $(seq 1 30); do
+              if docker compose exec -T db pg_isready -U library_user -d library_db > /dev/null 2>&1; then
+                echo "Database is ready!"
+                break
+              fi
+              echo "Waiting... ($i/30)"
+              sleep 2
+            done
 
             # Run database migrations
             echo "Running migrations..."

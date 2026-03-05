@@ -38,7 +38,7 @@ git clone https://github.com/00016042/library-management-django.git .
 cat > .env << 'EOF'
 SECRET_KEY=your-production-secret-key-here
 DEBUG=False
-ALLOWED_HOSTS=yourdomain.uz,www.yourdomain.uz
+ALLOWED_HOSTS=00016042-library.duckdns.org,localhost,127.0.0.1
 DB_NAME=library_db
 DB_USER=library_user
 DB_PASSWORD=your-strong-db-password
@@ -48,6 +48,6 @@ EOF
 
 echo "Server setup complete!"
 echo "Next steps:"
-echo "1. Edit /opt/library-management-django/.env with real values"
-echo "2. Install SSL certificate with: sudo certbot certonly --webroot"
+echo "1. Edit /opt/library-management-django/.env and replace SECRET_KEY and DB_PASSWORD with real values"
+echo "2. Install SSL certificate with: sudo certbot certonly --webroot -w /var/www/certbot -d 00016042-library.duckdns.org"
 echo "3. Run: docker compose up -d"
