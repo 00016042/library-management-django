@@ -1,5 +1,3 @@
-version: '3.9'
-
 # Development override - for local development only
 services:
   db:
