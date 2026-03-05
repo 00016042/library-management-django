@@ -32,7 +32,7 @@ A fully-featured Django web application for managing library books, authors, mem
 | Containerization | Docker, Docker Compose |
 | CI/CD | GitHub Actions |
 | Registry | Docker Hub |
-| Cloud | Eskiz Server (Ubuntu 22.04) |
+| Cloud | Google Cloud VM (Ubuntu 22.04) |
 | SSL | Let's Encrypt (Certbot) |
 | Frontend | Bootstrap 5, Font Awesome |
 
@@ -234,7 +234,8 @@ pytest books/tests.py -v
 
 ## Live Access
 
-- **Application URL:** https://yourdomain.uz
+- **Application URL:** https://00016042-library.duckdns.org
 - **GitHub Repository:** https://github.com/00016042/library-management-django
 - **Docker Hub:** https://hub.docker.com/r/kozimbek/library-management-django
-# Deployed to https://00016042-library.duckdns.org
+- **Server:** Google Cloud VM (us-central1-a), Ubuntu 22.04 LTS
+- **SSL:** Let's Encrypt certificate (valid until 2026-06-03)
