@@ -1,6 +1,4 @@
-# ============================================================
 # Stage 1: Builder - install dependencies
-# ============================================================
 FROM python:3.11-slim AS builder
 
 WORKDIR /app
@@ -16,9 +14,8 @@ COPY app/requirements.txt .
 RUN pip install --upgrade pip && \
     pip install --prefix=/install --no-cache-dir -r requirements.txt
 
-# ============================================================
 # Stage 2: Production - minimal runtime image
-# ============================================================
+
 FROM python:3.11-slim AS production
 
 WORKDIR /app
